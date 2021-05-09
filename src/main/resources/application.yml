@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    data:
+    - classpath:groupe-data.sql
+    schema:    - classpath:groupe-schema.sql
+    url: "jdbc:h2:mem:groupeDB"
+      jpa:    hibernate:      ddl-auto: none

@@ -1,0 +1,29 @@
+DROP TABLE IF EXISTS ALBUM;
+
+CREATE TABLE IF NOT EXISTS ALBUM (
+    id INTEGER  PRIMARY KEY AUTO_INCREMENT,
+    nom VARCHAR2(100),
+    annee VARCHAR2(4),
+    id_artiste INTEGER,
+    genre VARCHAR2(100),
+    description VARCHAR2(500),
+    url_Image VARCHAR2(1000)
+);
+
+
+CREATE TABLE IF NOT EXISTS GROUPE (
+    id INTEGER  PRIMARY KEY AUTO_INCREMENT,
+    nom VARCHAR2(100),
+    pays VARCHAR2(100),
+    biographie VARCHAR2(500)
+);
+
+
+CREATE TABLE IF NOT EXISTS CONCERT (
+    id INTEGER  PRIMARY KEY AUTO_INCREMENT,
+    ville VARCHAR2(100),
+    nom_de_la_Salle VARCHAR2(100),
+    id_artiste INTEGER,
+    ref_externe INTEGER,
+    date TIMESTAMP(0)
+);
