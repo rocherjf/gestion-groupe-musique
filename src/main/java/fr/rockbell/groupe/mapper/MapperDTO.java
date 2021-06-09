@@ -52,7 +52,6 @@ public interface MapperDTO {
 	public List<ConcertDTO> fromConcertToConcertDTO(List<Concert> concert);
 
 	// DTO -> External entities
-	@Mapping(target = "add", ignore = true)
 	public GroupeOutput fromGroupeDTOToGroupeOutput(GroupeDTO groupe);
 	public List<GroupeOutput> fromGroupeDTOToGroupeOutput(List<GroupeDTO> groupe);
 
