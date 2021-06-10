@@ -10,11 +10,14 @@ Fonctionnalités :
 * Visualisation des groupes créés
 * Visualisation d'un groupe via son id
 * Ajout d'un album pour un groupe
+* Visualisation d'un album
+* Visualisation des albums d'un groupe
 * Ajout d'une date de concert pour un groupe
+* Visualisation d'une date de concert
+* Visualisation des dates de concert d'un groupe
+
 
 ## Setup
 mvn clean install
 
 
-## TODO 
-* Mise en place HATEOAS
