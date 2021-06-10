@@ -14,6 +14,9 @@ public class AlbumDTO {
 	private String annee;
 	
 	private String description;
+	
 	private String urlImage;
+	
+	private long idGroupe;
 
 }

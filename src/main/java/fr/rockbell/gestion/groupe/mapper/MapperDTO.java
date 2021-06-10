@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
+import fr.rockbell.gestion.groupe.controller.AlbumController;
 import fr.rockbell.gestion.groupe.controller.ConcertController;
 import fr.rockbell.gestion.groupe.controller.GroupeController;
 import fr.rockbell.gestion.groupe.dto.AlbumDTO;
@@ -73,6 +74,12 @@ public interface MapperDTO {
 	public default void addLinks(ConcertDTO concertDTO, @MappingTarget ConcertOutput concertOutput) {
 		concertOutput.add(WebMvcLinkBuilder.linkTo(ConcertController.class).slash(concertDTO.getId()).withSelfRel());
 		concertOutput.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConcertController.class).recupererTousLesConcertsDUnGroupe(concertDTO.getIdGroupe())).withRel("concertsDuMemeGroupe"));
+	}
+	
+	@AfterMapping
+	public default void addLinks(AlbumDTO albumDTO, @MappingTarget AlbumOutput albumOutput) {
+		albumOutput.add(WebMvcLinkBuilder.linkTo(AlbumController.class).slash(albumDTO.getId()).withSelfRel());
+		albumOutput.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AlbumController.class).recupererTousLesAlbumsDUnGroupe(albumDTO.getIdGroupe())).withRel("AlbumsDuMemeGroupe"));
 	}
 	
 

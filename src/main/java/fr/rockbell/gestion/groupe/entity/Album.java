@@ -29,6 +29,8 @@ public class Album {
 
 	private String description;
 	private String urlImage;
+	
+	private long idGroupe;
 
 	
 	protected static Album buildFromAlbumDTO(AlbumDTO albumDTO) {
