@@ -4,11 +4,11 @@ import java.time.Instant;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class ConcertOutput extends RepresentationModel<GroupeOutput> {
 
 	private String ville;

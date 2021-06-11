@@ -49,7 +49,7 @@ public class Groupe {
 		if(groupeACreer.getNom().isEmpty()) {
 			throw new IllegalStateException("Le nom du groupe ne peut pas être vide");
 		}
-		Groupe groupe = new Groupe();
+		var groupe = new Groupe();
 		groupe.nom = groupeACreer.getNom();
 		groupe.pays = groupeACreer.getPays();
 		groupe.biographie = groupeACreer.getBiographie();

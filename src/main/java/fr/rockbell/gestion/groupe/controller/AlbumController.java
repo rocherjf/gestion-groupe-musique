@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class AlbumController {
 	
 	
-	private final AlbumService AlbumService;
+	private final AlbumService albumService;
 	
 	private final MapperDTO groupeDTOMapper;
 	
@@ -28,9 +28,9 @@ public class AlbumController {
 	public List<AlbumOutput> recupererTousLesAlbumsDUnGroupe(@RequestParam Long idGroupe){
 
 		if(idGroupe == null) {
-			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(AlbumService.recupererTousLesAlbums());
+			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbums());
 		}else {
-			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(AlbumService.recupererTousLesAlbumsDunGroupe(idGroupe.longValue()));
+			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbumsDunGroupe(idGroupe.longValue()));
 		}
 		
 	}
@@ -38,7 +38,7 @@ public class AlbumController {
 	
 	@GetMapping("/{id}")
 	public AlbumOutput recupererAlbumViaSonId(@PathVariable(name = "id") long id) {
-		return groupeDTOMapper.fromAlbumDTOToAlbumOutput(AlbumService.recupererUnAlbumViaSonId(id));
+		return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererUnAlbumViaSonId(id));
 		
 	}
 }

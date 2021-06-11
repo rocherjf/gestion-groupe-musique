@@ -52,7 +52,7 @@ public class Concert {
 					"La date du concert ne peut pas être null");
 		}
 		
-		Concert concert = new Concert();
+		var concert = new Concert();
 		concert.date = concertDTO.getDate();
 		concert.nomDeLaSalle = concertDTO.getNomDeLaSalle();
 		concert.refExterne = concertDTO.getRefExterne();

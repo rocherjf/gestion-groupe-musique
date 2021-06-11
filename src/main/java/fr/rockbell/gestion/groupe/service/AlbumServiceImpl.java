@@ -28,7 +28,7 @@ public class AlbumServiceImpl implements AlbumService {
 
 	@Override
 	public AlbumDTO recupererUnAlbumViaSonId(long idAlbum) {
-		return groupeMapper.fromAlbumToAlbumDTO(albumRepository.findById(idAlbum).get());
+		return groupeMapper.fromAlbumToAlbumDTO(albumRepository.findById(idAlbum).orElseThrow());
 	}
 
 }

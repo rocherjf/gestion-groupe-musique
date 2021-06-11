@@ -26,13 +26,13 @@ public class GroupeServiceImp implements GroupeService {
 
 	@Override
 	public GroupeDTO recupererGroupeByID(long id) {
-		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(id).get());
+		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(id).orElseThrow());
 	}
 
 	@Override
 	public GroupeDTO creerGroupe(GroupeDTO groupe) {
 
-		Groupe groupeACreer = Groupe.buildfromDTO(groupe);
+		var groupeACreer = Groupe.buildfromDTO(groupe);
 		groupeACreer = groupeRepository.save(groupeACreer);
 		return groupeMapper.fromGroupeToGroupeDTO(groupeACreer);
 	}
@@ -40,7 +40,7 @@ public class GroupeServiceImp implements GroupeService {
 	@Override
 	public GroupeDTO ajouterUnAlbumAUnGroupe(long idGroupe, AlbumDTO album) {
 
-		Groupe groupe = groupeRepository.findById(idGroupe).get();
+		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
 		groupe.ajouterAlbum(album);
 		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.save(groupe));
 	}
@@ -49,14 +49,14 @@ public class GroupeServiceImp implements GroupeService {
 	public GroupeDTO ajouterUnConcertAUnGroupe(long idGroupe,
 			ConcertDTO concert) {
 
-		Groupe groupe = groupeRepository.findById(idGroupe).get();
+		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
 		groupe.ajouterConcert(concert);
 		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.save(groupe));
 	}
 
 	@Override
 	public List<ConcertDTO> recupererTousLesConcertsPourUnGroupe(long idGroupe) {
-		Groupe groupe = groupeRepository.findById(idGroupe).get();
+		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
 		return groupeMapper.fromConcertToConcertDTO(groupe.getConcerts());
 	}
 

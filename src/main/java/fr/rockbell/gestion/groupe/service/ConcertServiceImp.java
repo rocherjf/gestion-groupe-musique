@@ -28,7 +28,7 @@ public class ConcertServiceImp implements ConcertService {
 
 	@Override
 	public ConcertDTO recupererUnConcertViaSonId(long idConcert) {
-		return groupeMapper.fromConcertToConcertDTO(concertRepository.findById(idConcert).get());
+		return groupeMapper.fromConcertToConcertDTO(concertRepository.findById(idConcert).orElseThrow());
 	}
 
 }

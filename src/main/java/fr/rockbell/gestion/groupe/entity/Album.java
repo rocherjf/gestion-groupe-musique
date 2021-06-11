@@ -44,7 +44,8 @@ public class Album {
 			throw new IllegalStateException(
 					"Le nom de l'album ne peut pas être vide");
 		}
-		Album album = new Album();
+		
+		var album = new Album();
 		album.nom = albumDTO.getNom();
 		album.genre = albumDTO.getGenre();
 		album.annee = albumDTO.getAnnee();

@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "groupes")
 public class GroupeOutput extends RepresentationModel<GroupeOutput>{
 	

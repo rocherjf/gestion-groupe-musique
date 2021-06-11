@@ -2,11 +2,11 @@ package fr.rockbell.gestion.groupe.external.output;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class AlbumOutput extends RepresentationModel<GroupeOutput> {
 	
 	private String nom;
