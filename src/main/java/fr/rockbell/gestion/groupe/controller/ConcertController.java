@@ -25,7 +25,7 @@ public class ConcertController {
 	
 	
 	@GetMapping
-	public List<ConcertOutput> recupererTousLesConcertsDUnGroupe(@RequestParam Long idGroupe){
+	public List<ConcertOutput> recupererTousLesConcertsDUnGroupe(@RequestParam(required = false) Long idGroupe){
 
 		if(idGroupe == null) {
 			return groupeDTOMapper.fromConcertDTOToConcertOutput(concertService.recupererTousLesConcerts());

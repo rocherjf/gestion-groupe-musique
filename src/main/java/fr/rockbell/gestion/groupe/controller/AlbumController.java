@@ -25,7 +25,7 @@ public class AlbumController {
 	
 	
 	@GetMapping
-	public List<AlbumOutput> recupererTousLesAlbumsDUnGroupe(@RequestParam Long idGroupe){
+	public List<AlbumOutput> recupererTousLesAlbumsDUnGroupe(@RequestParam(required = false) Long idGroupe){
 
 		if(idGroupe == null) {
 			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbums());
