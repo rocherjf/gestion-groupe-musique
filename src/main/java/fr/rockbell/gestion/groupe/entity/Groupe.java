@@ -50,6 +50,8 @@ public class Groupe {
 			throw new IllegalStateException("Le nom du groupe ne peut pas être vide");
 		}
 		var groupe = new Groupe();
+		
+		groupe.id = groupeACreer.getId();
 		groupe.nom = groupeACreer.getNom();
 		groupe.pays = groupeACreer.getPays();
 		groupe.biographie = groupeACreer.getBiographie();

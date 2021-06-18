@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,21 +40,27 @@ public class GroupeController {
 		return CollectionModel.of(groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupes), linkSelfRef);
 	}
 	
-//	@GetMapping
-//	public List<GroupeOutput> recupererTousLesGroupes() {
-//		List<GroupeDTO> groupes = groupeService.recupererTousLesGroupes();
-//		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupes);
-//	}
+	
+	@PostMapping
+	public GroupeOutput creerGroupe(@RequestBody GroupeInput groupeACreer) {
+		GroupeDTO groupe = groupeService.creerGroupe(groupeDTOMapper.fromGroupeInputToGroupeDTO(groupeACreer));
+		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
+	}
 
 	@GetMapping("/{id}")
 	public GroupeOutput recupererGroupeViaSonId(@PathVariable(name = "id") long id) {
 		GroupeDTO groupe = groupeService.recupererGroupeByID(id);
 		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
 	}
-
-	@PostMapping
-	public GroupeOutput creerGroupe(@RequestBody GroupeInput groupeACreer) {
-		GroupeDTO groupe = groupeService.creerGroupe(groupeDTOMapper.fromGroupeInputToGroupeDTO(groupeACreer));
+	
+	@DeleteMapping("/{id}")
+	public void supprimerGroupeViaSonId(@PathVariable(name = "id") long id) {
+		groupeService.supprimerGroupe(id);
+	}
+	
+	@PutMapping("/{id}")
+	public GroupeOutput mettreAJourLeGroupe(@PathVariable(name = "id") long id, @RequestBody GroupeInput groupeAMettreAJour) {
+		GroupeDTO groupe = groupeService.mettreAJourLeGroupe(id, groupeDTOMapper.fromGroupeInputToGroupeDTO(groupeAMettreAJour));
 		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
 	}
 

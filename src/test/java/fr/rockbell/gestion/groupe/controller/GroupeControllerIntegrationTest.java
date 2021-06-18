@@ -1,6 +1,7 @@
 package fr.rockbell.gestion.groupe.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.core.TypeReferences;
-import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import fr.rockbell.gestion.groupe.external.input.GroupeInput;
@@ -16,18 +16,60 @@ import fr.rockbell.gestion.groupe.external.output.GroupeOutput;
 
 class GroupeControllerIntegrationTest extends AbstractSpringIntegrationTest {
 
-	private GroupeInput violetCold = new GroupeInput("Violet Cold", "Azerbaïdjan", "Also Known As Emin Guliyev");
-	private GroupeInput riseOfTheNorthStar = new GroupeInput("Rise Of The NortStar", "France",
+	private final GroupeInput violetCold = new GroupeInput("Violet Cold", "Azerbaïdjan", "Also Known As Emin Guliyev");
+	private final GroupeInput riseOfTheNorthStar = new GroupeInput("Rise Of The NortStar", "France",
 			"Formed in 2008, Paris, Île-de-France, France");
-	private GroupeInput theGreatOldOnes = new GroupeInput("The Great Old Ones", "France",
+	private final GroupeInput theGreatOldOnes = new GroupeInput("The Great Old Ones", "France",
 			"Formed in 2009, Bordeaux, Nouvelle-Aquitaine, France");
+
+	
+	// -----------------------
+	// -- Scénario de tests --
+	// -----------------------
+	
+	@Test
+	void scenarioCreationSuppressionGroupesSimples() {
+
+		// Création de différents groupes
+		GroupeOutput groupeVioletCold = creationGroupe(violetCold);
+		GroupeOutput groupeRiseOfTheNorthStar = creationGroupe(riseOfTheNorthStar);
+
+		// Suppression d'un groupe
+		suppressionGroupe(groupeRiseOfTheNorthStar.getId());
+
+		// Vérification qu'un seul groupe a bien été supprimé
+		testRecuperationGroupe_cas_inexistant(groupeRiseOfTheNorthStar.getId());
+		testRecuperationGroupeViaSonId_doitCorrespondreAuGroupeFourni(groupeVioletCold);
+
+	}
+
+	@Test
+	void scenarioRechercheGroupeInexistant() {
+		testRecuperationGroupe_cas_inexistant(1l);
+	}
+
+	@Test
+	void scenarioCreationMiseAjourGroupe() {
+		// Création de différents groupes
+		GroupeOutput groupeVioletCold = creationGroupe(violetCold);
+		
+		// Modification du groupe
+		GroupeInput violetColdModifie = violetCold;
+		violetColdModifie.setNom("Hot Violet");
+		GroupeOutput groupeVioletColdMaj = majGroupe(groupeVioletCold.getId(), violetColdModifie);
+		
+		// MAJ de notre objet témoin
+		groupeVioletCold.setNom("Hot Violet");
+		
+		// Vérification que la MAJ a bien été prise en compte
+		assertEquals(groupeVioletColdMaj, groupeVioletCold);
+		
+	}
 
 	@Test
 	void scenarioCreationGroupesSimples() {
 
 		List<GroupeOutput> groupesCrees = new ArrayList<>();
-		// Etape 0 : Aucun groupe ne doit être présent en BDD (vérif supp DB)
-		testRecuperationDeTousLesGroupes_doitContenirLaListeFournie(groupesCrees);
 
 		// Etape 1 : Création d'un groupe et vérification qu'il contient bien
 		// les données fournies
@@ -67,22 +109,26 @@ class GroupeControllerIntegrationTest extends AbstractSpringIntegrationTest {
 		testRecuperationDeTousLesGroupes_doitContenirLaListeFournie(groupesCrees);
 
 	}
+	
+	// -------------------------------------
+	// -- Méthodes de tests réutilisables --
+	// -------------------------------------
 
 	private void testRecuperationDeTousLesGroupes_doitContenirLaListeFournie(List<GroupeOutput> groupesCrees) {
 
 		webClient
-		.get()
-		.uri("/groupes")
-		.exchange()
-		.expectStatus().isOk()
-		.expectBody(new TypeReferences.CollectionModelType<GroupeOutput>(){})
-		.consumeWith(result -> {
-			CollectionModel<GroupeOutput> collectionGroupes = result.getResponseBody();
-			assertThat(collectionGroupes.getContent()).hasSize(groupesCrees.size());
-			assertThat(collectionGroupes.getContent().containsAll(groupesCrees));
-		});
-		
-		
+				.get()
+				.uri("/groupes")
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(new TypeReferences.CollectionModelType<GroupeOutput>() {
+				})
+				.consumeWith(result -> {
+					CollectionModel<GroupeOutput> collectionGroupes = result.getResponseBody();
+					assertThat(collectionGroupes.getContent()).hasSize(groupesCrees.size());
+					assertThat(collectionGroupes.getContent().containsAll(groupesCrees));
+				});
+
 	}
 
 	private void testRecuperationGroupeViaSonId_doitCorrespondreAuGroupeFourni(GroupeOutput groupeCree) {
@@ -100,23 +146,61 @@ class GroupeControllerIntegrationTest extends AbstractSpringIntegrationTest {
 
 	}
 
+	private void testRecuperationGroupe_cas_inexistant(long idGroupeInexistant) {
+
+		webClient.get()
+				.uri("/groupes/" + idGroupeInexistant)
+				.exchange()
+				.expectStatus().is5xxServerError();
+
+	}
+
 	private GroupeOutput testCreationGroupe_doitCreerUnGroupe(GroupeInput groupeACreer) {
 
-		EntityExchangeResult<GroupeOutput> result = webClient.post()
+		GroupeOutput groupeCree = creationGroupe(groupeACreer);
+
+		assertThat(groupeCree.getNom()).isEqualTo(groupeACreer.getNom());
+		assertThat(groupeCree.getPays()).isEqualTo(groupeACreer.getPays());
+		assertThat(groupeCree.getBiographie()).isEqualTo(groupeACreer.getBiographie());
+
+		return groupeCree;
+	}
+
+	// --------------------------------------------------------
+	// -- Méthodes permettant d'appeler les différentes APIs --
+	// --------------------------------------------------------
+	
+	private GroupeOutput creationGroupe(GroupeInput groupeACreer) {
+
+		return webClient.post()
 				.uri("/groupes")
 				.body(BodyInserters.fromValue(groupeACreer))
 				.exchange()
 				.expectStatus().isOk()
 				.expectBody(GroupeOutput.class)
-				.returnResult();
+				.returnResult()
+				.getResponseBody();
+	}
 
-		GroupeOutput groupeCree = result.getResponseBody();
+	private void suppressionGroupe(long idGroupeASupprimer) {
 
-		assertThat(groupeCree.getNom()).isEqualTo(groupeACreer.getNom());
-		assertThat(groupeCree.getPays()).isEqualTo(groupeACreer.getPays());
-		assertThat(groupeCree.getBiographie()).isEqualTo(groupeACreer.getBiographie());
-		
-		return groupeCree;
+		webClient.delete()
+				.uri("/groupes/" + idGroupeASupprimer)
+				.exchange()
+				.expectStatus().isOk();
+	}
+	
+	private GroupeOutput majGroupe(long idGroupeAMettreAJour, GroupeInput groupeACreer) {
+
+		return webClient.put()
+				.uri("/groupes/"+idGroupeAMettreAJour)
+				.body(BodyInserters.fromValue(groupeACreer))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(GroupeOutput.class)
+				.returnResult()
+				.getResponseBody();
+
 	}
 
 }

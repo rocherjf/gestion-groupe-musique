@@ -15,11 +15,16 @@ public interface GroupeService {
 	GroupeDTO creerGroupe(GroupeDTO groupe);
 	
 	
+	GroupeDTO mettreAJourLeGroupe(long id, GroupeDTO groupe);
+	
+	
 	GroupeDTO ajouterUnAlbumAUnGroupe(long idGroupe, AlbumDTO album);
 	
 	GroupeDTO ajouterUnConcertAUnGroupe(long idGroupe, ConcertDTO concert);
 	
 	
 	List<ConcertDTO> recupererTousLesConcertsPourUnGroupe(long idGroupe);
+
+	void supprimerGroupe(long idGroupe);
 	
 }

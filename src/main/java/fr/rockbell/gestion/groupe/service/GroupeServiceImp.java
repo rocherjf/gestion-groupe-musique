@@ -1,6 +1,7 @@
 package fr.rockbell.gestion.groupe.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
@@ -26,20 +27,20 @@ public class GroupeServiceImp implements GroupeService {
 
 	@Override
 	public GroupeDTO recupererGroupeByID(long id) {
-		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(id).orElseThrow());
+		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(id).orElseThrow(NoSuchElementException::new));
 	}
 
 	@Override
 	public GroupeDTO creerGroupe(GroupeDTO groupe) {
 
 		var groupeACreer = groupeRepository.save(Groupe.buildfromDTO(groupe));
-		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(groupeACreer.getId()).orElseThrow());
+		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(groupeACreer.getId()).orElseThrow(NoSuchElementException::new));
 	}
 
 	@Override
 	public GroupeDTO ajouterUnAlbumAUnGroupe(long idGroupe, AlbumDTO album) {
 
-		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
+		var groupe = groupeRepository.findById(idGroupe).orElseThrow(NoSuchElementException::new);
 		groupe.ajouterAlbum(album);
 		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.save(groupe));
 	}
@@ -48,7 +49,7 @@ public class GroupeServiceImp implements GroupeService {
 	public GroupeDTO ajouterUnConcertAUnGroupe(long idGroupe,
 			ConcertDTO concert) {
 
-		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
+		var groupe = groupeRepository.findById(idGroupe).orElseThrow(NoSuchElementException::new);
 		groupe.ajouterConcert(concert);
 		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.save(groupe));
 	}
@@ -57,6 +58,24 @@ public class GroupeServiceImp implements GroupeService {
 	public List<ConcertDTO> recupererTousLesConcertsPourUnGroupe(long idGroupe) {
 		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
 		return groupeMapper.fromConcertToConcertDTO(groupe.getConcerts());
+	}
+
+	@Override
+	public GroupeDTO mettreAJourLeGroupe(long idGroupe, GroupeDTO groupe) {
+		
+		if(!groupeRepository.existsById(idGroupe)) {
+			throw new UnsupportedOperationException("Le groupe n'existe pas. Pour créer un groupe utiliser la méthode POST");
+		}
+
+		groupe.setId(idGroupe);
+		var groupeACreer = groupeRepository.save(Groupe.buildfromDTO(groupe));
+		
+		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(groupeACreer.getId()).orElseThrow());
+	}
+	
+	@Override
+	public void supprimerGroupe(long idGroupe) {
+		groupeRepository.deleteById(idGroupe);
 	}
 
 }
