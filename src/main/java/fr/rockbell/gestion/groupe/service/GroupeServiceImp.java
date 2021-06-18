@@ -32,9 +32,8 @@ public class GroupeServiceImp implements GroupeService {
 	@Override
 	public GroupeDTO creerGroupe(GroupeDTO groupe) {
 
-		var groupeACreer = Groupe.buildfromDTO(groupe);
-		groupeACreer = groupeRepository.save(groupeACreer);
-		return groupeMapper.fromGroupeToGroupeDTO(groupeACreer);
+		var groupeACreer = groupeRepository.save(Groupe.buildfromDTO(groupe));
+		return groupeMapper.fromGroupeToGroupeDTO(groupeRepository.findById(groupeACreer.getId()).orElseThrow());
 	}
 
 	@Override
@@ -59,6 +58,5 @@ public class GroupeServiceImp implements GroupeService {
 		var groupe = groupeRepository.findById(idGroupe).orElseThrow();
 		return groupeMapper.fromConcertToConcertDTO(groupe.getConcerts());
 	}
-
 
 }

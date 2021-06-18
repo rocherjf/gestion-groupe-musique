@@ -6,6 +6,8 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import fr.rockbell.gestion.groupe.controller.AlbumController;
@@ -24,7 +26,7 @@ import fr.rockbell.gestion.groupe.external.output.AlbumOutput;
 import fr.rockbell.gestion.groupe.external.output.ConcertOutput;
 import fr.rockbell.gestion.groupe.external.output.GroupeOutput;
 
-@Mapper
+@Mapper(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
 public interface MapperDTO {
 
 	// External entities (Input) -> DTO
@@ -66,21 +68,30 @@ public interface MapperDTO {
 	@AfterMapping
 	public default void addLinks(GroupeDTO groupeDTO, @MappingTarget GroupeOutput groupeOutput) {
 		groupeOutput.add(WebMvcLinkBuilder.linkTo(GroupeController.class).slash(groupeDTO.getId()).withSelfRel());
-		groupeOutput.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(GroupeController.class).recupererTousLesGroupes()).withRel("allGroupes"));
-		
+		groupeOutput.add(
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(GroupeController.class).recupererTousLesGroupes())
+						.withRel("allGroupes"));
+
 	}
-	
+
 	@AfterMapping
 	public default void addLinks(ConcertDTO concertDTO, @MappingTarget ConcertOutput concertOutput) {
 		concertOutput.add(WebMvcLinkBuilder.linkTo(ConcertController.class).slash(concertDTO.getId()).withSelfRel());
-		concertOutput.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(ConcertController.class).recupererTousLesConcertsDUnGroupe(concertDTO.getIdGroupe())).withRel("concertsDuMemeGroupe"));
+		concertOutput
+				.add(WebMvcLinkBuilder
+						.linkTo(WebMvcLinkBuilder.methodOn(ConcertController.class)
+								.recupererTousLesConcertsDUnGroupe(concertDTO.getIdGroupe()))
+						.withRel("concertsDuMemeGroupe"));
 	}
-	
+
 	@AfterMapping
 	public default void addLinks(AlbumDTO albumDTO, @MappingTarget AlbumOutput albumOutput) {
 		albumOutput.add(WebMvcLinkBuilder.linkTo(AlbumController.class).slash(albumDTO.getId()).withSelfRel());
-		albumOutput.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AlbumController.class).recupererTousLesAlbumsDUnGroupe(albumDTO.getIdGroupe())).withRel("AlbumsDuMemeGroupe"));
+		albumOutput
+				.add(WebMvcLinkBuilder
+						.linkTo(WebMvcLinkBuilder.methodOn(AlbumController.class)
+								.recupererTousLesAlbumsDUnGroupe(albumDTO.getIdGroupe()))
+						.withRel("AlbumsDuMemeGroupe"));
 	}
-	
 
 }

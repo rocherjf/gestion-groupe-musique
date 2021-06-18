@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 @Relation(collectionRelation = "groupes")
 public class GroupeOutput extends RepresentationModel<GroupeOutput>{
 	
+	private long id;
+	
 	private String nom;
 
 	private String pays;
