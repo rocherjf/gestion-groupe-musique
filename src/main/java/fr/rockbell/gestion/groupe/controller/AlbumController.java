@@ -29,11 +29,11 @@ public class AlbumController {
 	@GetMapping(produces = { "application/hal+json" })
 	public CollectionModel<AlbumOutput> recupererTousLesAlbumsDUnGroupe(@RequestParam(required = false) Long idGroupe){
 		
-		var linkSelfRef = linkTo(methodOn(AlbumController.class).recupererTousLesAlbumsDUnGroupe(idGroupe)).withSelfRel(); 
-		
 		if(idGroupe == null) {
+			var linkSelfRef = linkTo(AlbumController.class).withSelfRel(); 
 			return CollectionModel.of(groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbums()), linkSelfRef);
 		}else {
+			var linkSelfRef = linkTo(methodOn(AlbumController.class).recupererTousLesAlbumsDUnGroupe(idGroupe)).withSelfRel(); 
 			return CollectionModel.of(groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbumsDunGroupe(idGroupe.longValue())), linkSelfRef);
 		}
 		

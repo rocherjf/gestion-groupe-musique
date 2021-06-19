@@ -28,14 +28,14 @@ public class ConcertController {
 	public CollectionModel<ConcertOutput> recupererTousLesConcertsDUnGroupe(
 			@RequestParam(required = false) Long idGroupe) {
 
-		var linkSelfRef = linkTo(methodOn(ConcertController.class).recupererTousLesConcertsDUnGroupe(idGroupe))
-				.withSelfRel();
-
 		if (idGroupe == null) {
+			var linkSelfRef = linkTo(ConcertController.class).withSelfRel();
 			return CollectionModel.of(
 					groupeDTOMapper.fromConcertDTOToConcertOutput(concertService.recupererTousLesConcerts()),
 					linkSelfRef);
 		} else {
+			var linkSelfRef = linkTo(methodOn(ConcertController.class).recupererTousLesConcertsDUnGroupe(idGroupe))
+					.withSelfRel();
 			return CollectionModel.of(groupeDTOMapper.fromConcertDTOToConcertOutput(
 					concertService.recupererTousLesConcertsDunGroupe(idGroupe.longValue())),
 					linkSelfRef);
