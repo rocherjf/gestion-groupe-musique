@@ -3,7 +3,6 @@ package fr.rockbell.gestion.groupe.controller;
 import java.util.List;
 
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,23 +30,20 @@ public class GroupeController {
 
 	private final MapperDTO groupeDTOMapper;
 
-	@GetMapping
+	@GetMapping(produces = { "application/hal+json" })
 	public CollectionModel<GroupeOutput> recupererTousLesGroupes() {
 		List<GroupeDTO> groupes = groupeService.recupererTousLesGroupes();
-
-		var linkSelfRef = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(GroupeController.class).recupererTousLesGroupes()).withSelfRel(); 
-
-		return CollectionModel.of(groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupes), linkSelfRef);
+		return groupeDTOMapper.fromGroupeDTOToCollectionGroupeOutput(groupes);
 	}
 	
 	
-	@PostMapping
+	@PostMapping(produces = { "application/hal+json" })
 	public GroupeOutput creerGroupe(@RequestBody GroupeInput groupeACreer) {
 		GroupeDTO groupe = groupeService.creerGroupe(groupeDTOMapper.fromGroupeInputToGroupeDTO(groupeACreer));
 		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(path = "/{id}", produces = { "application/hal+json" })
 	public GroupeOutput recupererGroupeViaSonId(@PathVariable(name = "id") long id) {
 		GroupeDTO groupe = groupeService.recupererGroupeByID(id);
 		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
@@ -58,20 +54,20 @@ public class GroupeController {
 		groupeService.supprimerGroupe(id);
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping(path = "/{id}", produces = { "application/hal+json" })
 	public GroupeOutput mettreAJourLeGroupe(@PathVariable(name = "id") long id, @RequestBody GroupeInput groupeAMettreAJour) {
 		GroupeDTO groupe = groupeService.mettreAJourLeGroupe(id, groupeDTOMapper.fromGroupeInputToGroupeDTO(groupeAMettreAJour));
 		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
 	}
 
-	@PostMapping("/{id}/albums")
+	@PostMapping(path = "/{id}/albums", produces = { "application/hal+json" })
 	public GroupeOutput ajouterAlbumGroupe(@PathVariable(name = "id") long idGroupe, @RequestBody AlbumInput album) {
 		GroupeDTO groupe = groupeService.ajouterUnAlbumAUnGroupe(idGroupe,
 				groupeDTOMapper.fromAlbumInputToAlbumDTO(album));
 		return groupeDTOMapper.fromGroupeDTOToGroupeOutput(groupe);
 	}
 
-	@PostMapping("/{id}/concerts")
+	@PostMapping(path = "/{id}/concerts", produces = { "application/hal+json" })
 	public GroupeOutput ajouterConcertGroupe(@PathVariable(name = "id") long idGroupe,
 			@RequestBody ConcertInput concert) {
 		GroupeDTO groupe = groupeService.ajouterUnConcertAUnGroupe(idGroupe,

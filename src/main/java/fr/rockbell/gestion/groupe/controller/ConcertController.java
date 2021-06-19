@@ -1,7 +1,9 @@
 package fr.rockbell.gestion.groupe.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,28 +19,33 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/concerts")
 @RequiredArgsConstructor
 public class ConcertController {
-	
-	
-	private final ConcertService concertService;
-	
-	private final MapperDTO groupeDTOMapper;
-	
-	
-	@GetMapping
-	public List<ConcertOutput> recupererTousLesConcertsDUnGroupe(@RequestParam(required = false) Long idGroupe){
 
-		if(idGroupe == null) {
-			return groupeDTOMapper.fromConcertDTOToConcertOutput(concertService.recupererTousLesConcerts());
-		}else {
-			return groupeDTOMapper.fromConcertDTOToConcertOutput(concertService.recupererTousLesConcertsDunGroupe(idGroupe.longValue()));
+	private final ConcertService concertService;
+
+	private final MapperDTO groupeDTOMapper;
+
+	@GetMapping(produces = {"application/hal+json"})
+	public CollectionModel<ConcertOutput> recupererTousLesConcertsDUnGroupe(
+			@RequestParam(required = false) Long idGroupe) {
+
+		var linkSelfRef = linkTo(methodOn(ConcertController.class).recupererTousLesConcertsDUnGroupe(idGroupe))
+				.withSelfRel();
+
+		if (idGroupe == null) {
+			return CollectionModel.of(
+					groupeDTOMapper.fromConcertDTOToConcertOutput(concertService.recupererTousLesConcerts()),
+					linkSelfRef);
+		} else {
+			return CollectionModel.of(groupeDTOMapper.fromConcertDTOToConcertOutput(
+					concertService.recupererTousLesConcertsDunGroupe(idGroupe.longValue())),
+					linkSelfRef);
 		}
-		
+
 	}
-	
-	
-	@GetMapping("/{id}")
+
+	@GetMapping(path = "/{id}", produces = {"application/hal+json"})
 	public ConcertOutput recupererConcertViaSonId(@PathVariable(name = "id") long id) {
 		return groupeDTOMapper.fromConcertDTOToConcertOutput(concertService.recupererUnConcertViaSonId(id));
-		
+
 	}
 }

@@ -1,7 +1,9 @@
 package fr.rockbell.gestion.groupe.controller;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,19 +26,21 @@ public class AlbumController {
 	private final MapperDTO groupeDTOMapper;
 	
 	
-	@GetMapping
-	public List<AlbumOutput> recupererTousLesAlbumsDUnGroupe(@RequestParam(required = false) Long idGroupe){
-
+	@GetMapping(produces = { "application/hal+json" })
+	public CollectionModel<AlbumOutput> recupererTousLesAlbumsDUnGroupe(@RequestParam(required = false) Long idGroupe){
+		
+		var linkSelfRef = linkTo(methodOn(AlbumController.class).recupererTousLesAlbumsDUnGroupe(idGroupe)).withSelfRel(); 
+		
 		if(idGroupe == null) {
-			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbums());
+			return CollectionModel.of(groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbums()), linkSelfRef);
 		}else {
-			return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbumsDunGroupe(idGroupe.longValue()));
+			return CollectionModel.of(groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererTousLesAlbumsDunGroupe(idGroupe.longValue())), linkSelfRef);
 		}
 		
 	}
 	
 	
-	@GetMapping("/{id}")
+	@GetMapping(path = "/{id}", produces = { "application/hal+json" })
 	public AlbumOutput recupererAlbumViaSonId(@PathVariable(name = "id") long id) {
 		return groupeDTOMapper.fromAlbumDTOToAlbumOutput(albumService.recupererUnAlbumViaSonId(id));
 		
